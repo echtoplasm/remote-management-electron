@@ -32,7 +32,9 @@ const loadSystemSpecs = async () => {
     }
 }
 
-loadSystemSpecs();
+setInterval(async () => {
+    await loadSystemSpecs();
+}, 3000);
 
 const sshAgentDiv = document.querySelector("#ssh-agent");
 const currentLoadDiv = document.querySelector("#current-load");
@@ -90,6 +92,18 @@ sshForm.addEventListener('submit', async (event) =>{
     }
     
 })
+
+
+const testWebSockets = async(event, data) => {
+    try{
+        const result = await window.electronAPI.webSocketConnect('test data');
+        console.log('Websocket result', result)
+    }catch(err){
+        console.error('Websocket error', err.message)
+    }
+}
+
+testWebSockets();
 
 //sshConnectExec is the bridge function to await 
 //need to make an object to pass credentials to the ssh connection 

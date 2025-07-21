@@ -3,6 +3,8 @@ const path = require('node:path');
 const si = require('systeminformation');
 const { readFileSync } = require('fs');
 const { Client } = require('ssh2');
+const { warn } = require('node:console');
+
 
 if (require('electron-squirrel-startup')) {
   app.quit();
@@ -46,46 +48,50 @@ app.on('window-all-closed', () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 
-ipcMain.handle('get-system-info', async () => {
-    try{
 
-        const [cpu, mem, osInfo, graphics] = await Promise.all([
-            si.cpu(),
-            si.mem(),
-            si.osInfo(),
-            si.graphics()
+
+ipcMain.handle('get-system-info', async () => {
+    
+
+        try{
+
+            const [cpu, mem, osInfo, graphics] = await Promise.all([
+                si.cpu(),
+                si.mem(),
+                si.osInfo(),
+                si.graphics()
         ])
 
-        return {
-            cpu: {
-                manufacturer: cpu.manufacturer,
-                brand: cpu.brand, 
-                cores: cpu.cores,
-                speed: cpu.speed
+            return {
+                cpu: {
+                    manufacturer: cpu.manufacturer,
+                    brand: cpu.brand, 
+                    cores: cpu.cores,
+                    speed: cpu.speed
             },
 
-            mem: {
-                total: mem.total,
-                free: mem.free, 
-                used: mem.used,
-                active: mem.active,
-            },
+                mem: {
+                    total: mem.total,
+                    free: mem.free, 
+                    used: mem.used,
+                    active: mem.active,
+                },
 
-            osInfo: {
-                platform: osInfo.platform,
-                distro: osInfo.distro,
-                release: osInfo.release
-            },
+                osInfo: {
+                    platform: osInfo.platform,
+                    distro: osInfo.distro,
+                    release: osInfo.release
+                },
 
-            graphics: graphics.controllers[0]?.model || 'Unknown'
+                graphics: graphics.controllers[0]?.model || 'Unknown'
 
+            }
+
+
+        }catch(err){
+            console.error("unable to run ipcMain handle", err.message);
+            return null
         }
-
-
-    }catch(err){
-        console.error("unable to run ipcMain handle", err.message);
-        return null
-    }
 })
 
 
@@ -165,3 +171,34 @@ ipcMain.handle('ssh-connect-and-execute', async(event, config, command) => {
         });
     });
 });
+
+ipcMain.handle('webSocketCommunication', async(event, data) =>{
+    
+    return new Promise((resolve, reject) => {
+
+        const socket = new WebSocket(`ws://localhost:8080`);
+    
+        socket.addEventListener('open', event => {
+            console.log('Socket connection established.');
+            socket.send(data);
+            resolve({success: true, message: 'connected'});
+        });
+
+        socket.addEventListener('message', event => { 
+            console.log ('message from server:', event.data)
+        });
+
+        socket.addEventListener('close', event => {
+            console.log('Websocket connection closed:', event.code, event.reason)
+        });
+
+        socket.addEventListener('error', error => {
+            console.log('error occurred', error);
+            reject(error);
+        });
+
+
+    });
+
+});
+
