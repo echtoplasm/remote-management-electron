@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hello World!</title>
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <h1>System Stats Dashboard</h1>
+    <div class="card">
+        <h2>CPU specs</h2>
+        <div id="cpu-specs">
+        </div>
+    </div>
+    <div class="card">
+        <h2>Random Access Memory Specs</h2>
+        <div id="mem-specs">
+        </div>
+    </div>
+    <div class="card">
+        <h2>Operating System Information</h2>
+        <div id="os-info">
+        </div>
+    </div>
+    <div class="card">
+        <h2>CurrentLoad</h2>
+        <div id="current-load">
+        </div>
+    </div>
+    <div class="card">
+        <h2>SSH-agent</h2>
+        <div id="ssh-agent"></div>
+        <form id="ssh-form">
+            <div id="host-div">
+                <label for="host">Host</label>
+                <input id="host"></input>
+            </div>
+            <div>
+                <label for="port">Port</label>
+                <input id="port"></input>
+            </div>
+            <div>
+                <label for="username">Username</label>
+                <input id="username"></input>
+            </div>
+            <button type="submit" value="connect">connect</button>
+        </form>
+    </div>
+    <script defer src="renderer.js"></script>
+  </body>
+</html>
