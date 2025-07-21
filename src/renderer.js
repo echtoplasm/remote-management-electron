@@ -67,7 +67,7 @@ sshForm.addEventListener('submit', async (event) =>{
     const username = document.querySelector("#username").value;
     const command = document.querySelector("#command").value;
     const password = document.querySelector("#password").value;
-
+    const sshResults = document.querySelector("#sshresults");
 
     const portInt = parseInt(port);
 
@@ -84,7 +84,7 @@ sshForm.addEventListener('submit', async (event) =>{
 
         const result = await window.electronAPI.sshConnectExec(config, command);
         console.log('SSH result:', result);
-
+        sshResults.innerHTML = (`<p>${result}</p>`);
     }catch(err){
         console.error('SSH error:', err)
     }
