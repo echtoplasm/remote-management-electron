@@ -54,13 +54,49 @@ const loadCurrentLoadSpecs = async () => {
 
 loadCurrentLoadSpecs();
 
+
+let config = {};
+
 const sshForm = document.querySelector("#ssh-form");
 
-sshForm.addEventListener('submit', (event) =>{
+sshForm.addEventListener('submit', async (event) =>{
     event.preventDefault();
     
     const host = document.querySelector("#host").value;
     const port = document.querySelector("#port").value;
     const username = document.querySelector("#username").value;
+    const command = document.querySelector("#command").value;
+    const password = document.querySelector("#password").value;
+
+
+    const portInt = parseInt(port);
+
+    console.log(`port: ${portInt} Object type ${typeof(portInt)}`);
+    
+    let config = { host, portInt, username, password }
+
+    console.log(config);
+    
+    console.log(host);
+    console.log(typeof(host));
+
+    try{
+
+        const result = await window.electronAPI.sshConnectExec(config, command);
+        console.log('SSH result:', result);
+
+    }catch(err){
+        console.error('SSH error:', err)
+    }
     
 })
+
+//sshConnectExec is the bridge function to await 
+//need to make an object to pass credentials to the ssh connection 
+// host: config.host
+// port: config.port
+// username: config.username
+// privateKey: config.privateKey
+
+
+

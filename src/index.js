@@ -114,7 +114,7 @@ ipcMain.handle('get-current-load', async () => {
 
 
 
-ipcMain.handle('ssh-connect-and-execute', async (event, config, command) => {
+ipcMain.handle('ssh-connect-and-execute', async(event, config, command) => {
   return new Promise((resolve, reject) => {
     const conn = new Client();
     let output = '';
@@ -159,9 +159,9 @@ ipcMain.handle('ssh-connect-and-execute', async (event, config, command) => {
 
     conn.connect({
         host: config.host,
-        port: config.port,
+        port: config.portInt,
         username: config.username, 
-        privateKey: config.privateKey
+        password: config.password
         });
     });
 });
