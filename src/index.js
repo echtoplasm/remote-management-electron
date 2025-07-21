@@ -118,35 +118,50 @@ ipcMain.handle('ssh-connect-and-execute', async (event, config, command) => {
   return new Promise((resolve, reject) => {
     const conn = new Client();
     let output = '';
-    
-    conn.on('ready', () => {
-      console.log('SSH Client ready');
-      conn.exec(command, (err, stream) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        
-        stream.on('close', (code, signal) => {
-          console.log('Stream closed with code:', code);
-          conn.end();
-          resolve({ output, exitCode: code });
-        }).on('data', (data) => {
-          output += data.toString();
-        }).stderr.on('data', (data) => {
-          console.log('STDERR: ' + data);
-        });
-      });
-    }).on('error', (err) => {
-      
-        reject(err);                
 
-    }).connect({
-      host: config.host,
-      port: config.port || 22,
-      username: config.username,
-      privateKey: config.privateKey ? readFileSync(config.privateKey) : undefined,
-      password: config.password // For password auth
+    conn.on('ready', () => {
+    
+        console.log('client: ready')
+        
+        conn.exec(command, (err, stream) => {
+            if (err) {
+                conn.end();
+                return reject(err);
+            }
+
+            stream.on('close', (code, signal) => {
+                console.log(`Stream: close ${code}, Signal: ${signal}`);
+                conn.end();
+
+                if (code === 0) {
+                    resolve(output);
+                }else{
+                    reject(new Error(`command failed with exit code ${code}`))
+                }
+
+
+            }).on('data', (data) => {
+                output += data.toString();
+                console.log(`STDOUT: ${data}`)
+            });
+                stream.stderr.on('data', (data) => {
+                    console.log(`STDERR: ${data}`);
+                    reject(new Error(data.toString()));
+            });
+
+        });
+
     });
-  });
+
+    conn.on('error', (err) => {
+        reject(err);
+    })
+
+    conn.connect({
+        host: config.host,
+        port: config.port,
+        username: config.username, 
+        privateKey: config.privateKey
+        });
+    });
 });
