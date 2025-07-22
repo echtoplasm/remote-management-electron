@@ -5,7 +5,7 @@ const { readFileSync } = require('fs');
 const { Client } = require('ssh2');
 const { warn } = require('node:console');
 const os = require('os');
-
+const {spawn} = require('node:child_process');
 
 if (require('electron-squirrel-startup')) {
   app.quit();
@@ -202,4 +202,29 @@ ipcMain.handle('webSocketCommunication', async(event, data) =>{
     });
 
 });
+
+ipcMain.handle('spawnSSHtunnel', (localPort, remotePort, remoteUser, remoteHost) => {
+    try{
+
+        const session = spawn('ssh', [
+            '-L', `${localPort}:${remoteHost}:${remotePort}`,
+            '-N', // no remote command
+            '-T',  // diable pseudo term
+            `${remoteUser}@${remoteHost}`]);
+
+        session.stdout.on('data', (data) => {
+                console.log(`stdout: ${data}`);
+            });
+
+        session.stdout.on('data', (data) => {
+                console.log(`stderr: ${data}`)
+            });
+                                        
+        return { sucess: true, pid: session.pid};
+
+        }catch(err){
+            console.error("Unable to spawn the ssh session", err.message);
+        }
+    
+})
 

@@ -105,12 +105,14 @@ const testWebSockets = async(event, data) => {
 
 testWebSockets();
 
-//sshConnectExec is the bridge function to await 
-//need to make an object to pass credentials to the ssh connection 
-// host: config.host
-// port: config.port
-// username: config.username
-// privateKey: config.privateKey
+const testSSHtunnel = async() => {
+    try{
+        const sshResults = await window.electronAPI.spawnSSHtunnel('8081', '22', 'zacha', '157.230.7.127');
+        console.log("ssh tunnel results:", sshResults);
+    }catch(err){
+        console.error("Unable to connect to sshtunnel from renderer.js", err.message);
+    }
+}
 
-
+testSSHtunnel();
 
