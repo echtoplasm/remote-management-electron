@@ -4,6 +4,7 @@ const si = require('systeminformation');
 const { readFileSync } = require('fs');
 const { Client } = require('ssh2');
 const { warn } = require('node:console');
+const os = require('os');
 
 
 if (require('electron-squirrel-startup')) {
