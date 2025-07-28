@@ -5,7 +5,11 @@ const { readFileSync } = require('fs');
 const { Client } = require('ssh2');
 const { warn } = require('node:console');
 const os = require('os');
-const {spawn} = require('node:child_process');
+const { spawn } = require('node:child_process');
+const { promisify } = require('util');
+const { exec } = require('child_process');
+
+const execAsync = promisify(exec);
 
 if (require('electron-squirrel-startup')) {
   app.quit();
@@ -149,7 +153,7 @@ ipcMain.handle('ssh-connect-and-execute', async(event, config, command) => {
 
             }).on('data', (data) => {
                 output += data.toString();
-                console.log(`STDOUT: ${data}`)
+console.log(`STDOUT: ${data}`)
             });
                 stream.stderr.on('data', (data) => {
                     console.log(`STDERR: ${data}`);
@@ -171,6 +175,91 @@ ipcMain.handle('ssh-connect-and-execute', async(event, config, command) => {
         password: config.password
         });
     });
+});
+
+
+ipcMain.handle('dockerCheck', async() => {
+    try{            
+        const { stdout: dockerStdout, stderr: dockerStderr } = await execAsync('docker --version')
+        
+        /*
+        const {stdout: linuxStdout, stderr: linuxStderr} = await execAsync('lsb_release -si');
+
+        return {
+            success: true,
+            version: dockerStdout.trim(),
+            distro: linuxStdout.trim()
+        }
+        */
+        
+        if(dockerStdout === '' || process.platform == 'linux'){
+            const { stdout: linuxStdout, stderr: linuxStderr } = await execAsync('lsb_release -si');
+            
+            if(linuxStdout === 'Arch') {
+                const dockerChild = spawn('sudo', ['pacman', '-S', '--noconfirm', 'docker']);
+                
+                dockerChild.on('close', (exitCode) => {
+                    console.log('Arch docker install exit code:', exitCode);
+                    
+                    if (exitCode === 0){ 
+                        console.log('Success downloading docker via pacman!')
+
+                        const systemCtlChild = spawn('sudo', ['systemctl' ,'start', 'docker']);
+
+                        systemCtlChild.on('close', (exitCode) => {
+                            if (exitCode === 0){
+                                console.log('Success systemctl start docker');
+                                const enableDockerChild = spawn('sudo', ['systemctl','enable', 'docker']);
+                
+                                enableDockerChild.on('close', (exitCode) => {
+                                    if(exitCode === 0){
+                                        console.log('Success systemctl enable docker');
+                                        const {stdout: archDockerStdout, stderr: archDockerStderr} = await execAsync('docker --version');
+
+                                        return archDockerStdout;
+
+                                    } else {
+                                        console.log('error enabling docker via systemctl')
+                                    }
+                                })
+                            } else {
+                                console.log('error enabling systemctl');
+                            }
+                        })
+
+                    } else {
+                        console.log('error downloading docker via pacman')
+                    }
+                });
+
+            }else if(linuxStdout === 'Fedora'){
+                const dockerChild = spawn('sudo', ['dnf', '-y', 'docker-ce', 'docker-ce-cli', 'containerd.io']);
+
+                dockerChild.on('close', (exitCode) =>{
+                    console.log('Fedora docker install exit code', exitCode);
+
+                    if (exitCode === 0) {
+                        console.log('Sucess downloading docker via dnf for Fedora linux')
+                    } else {
+                        console.log('error downloading docker for fedora via dnf')
+                    }
+
+                })
+                
+
+            }else if(liuxStdout === 'Ubuntu'){
+                const child = spawn()
+            }
+
+        }
+        
+    }catch(err){
+        console.error(`unable to get docker version`, err.message);
+        return {
+            sucess: false,
+            error: err.message
+        }
+    }
 });
 
 
@@ -199,7 +288,6 @@ ipcMain.handle('spawnSSHtunnel', (localPort, remotePort, remoteUser, remoteHost)
         }
     
 })
-
 
 
 ipcMain.handle('webSocketCommunication', async(event, data) =>{

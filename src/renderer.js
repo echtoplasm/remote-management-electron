@@ -116,3 +116,19 @@ const testSSHtunnel = async() => {
 
 testSSHtunnel();
 
+const dockerVersion = async() => {
+    try{
+        const dockV = await window.electronAPI.dockerCheck();
+        if (dockV.success){
+            console.log('Docker is installed', dockV.version);
+            console.log('Linux distro', dockV.distro);
+        } else {
+            console.log('Docker not found', dockV.error);
+        }
+    }catch(err){
+        console.error("Unable to get docker version", err.message);
+    }
+}
+
+dockerVersion();
+
