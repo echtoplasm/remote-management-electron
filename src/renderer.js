@@ -107,7 +107,7 @@ testWebSockets();
 
 const testSSHtunnel = async() => {
     try{
-        const sshResults = await window.electronAPI.spawnSSHtunnel('8081', '22', 'zacha', '157.230.7.127');
+        const sshResults = await window.electronAPI.spawnSSHtunnel('8080', '22', 'zacha', '157.230.7.127');
         console.log("ssh tunnel results:", sshResults);
     }catch(err){
         console.error("Unable to connect to sshtunnel from renderer.js", err.message);

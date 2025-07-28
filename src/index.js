@@ -173,35 +173,7 @@ ipcMain.handle('ssh-connect-and-execute', async(event, config, command) => {
     });
 });
 
-ipcMain.handle('webSocketCommunication', async(event, data) =>{
-    
-    return new Promise((resolve, reject) => {
 
-        const socket = new WebSocket(`ws://localhost:8080`);
-    
-        socket.addEventListener('open', event => {
-            console.log('Socket connection established.');
-            socket.send(data);
-            resolve({success: true, message: 'connected'});
-        });
-
-        socket.addEventListener('message', event => { 
-            console.log ('message from server:', event.data)
-        });
-
-        socket.addEventListener('close', event => {
-            console.log('Websocket connection closed:', event.code, event.reason)
-        });
-
-        socket.addEventListener('error', error => {
-            console.log('error occurred', error);
-            reject(error);
-        });
-
-
-    });
-
-});
 
 ipcMain.handle('spawnSSHtunnel', (localPort, remotePort, remoteUser, remoteHost) => {
     try{
@@ -228,3 +200,61 @@ ipcMain.handle('spawnSSHtunnel', (localPort, remotePort, remoteUser, remoteHost)
     
 })
 
+
+
+ipcMain.handle('webSocketCommunication', async(event, data) =>{
+    
+    return new Promise((resolve, reject) => {
+
+        const socket = new WebSocket(`ws://localhost:8080`);
+        let resolved = false
+        const timeout = setTimeout(() => {
+            if(!resolved){
+                resolved = true;
+                reject(new Error('Websocket Communication timeout'));
+            }
+        }, 30000);
+    
+        
+        socket.addEventListener('open', event => {
+            console.log('Socket connection established.');
+            socket.send(data);
+                   
+        });
+
+        socket.addEventListener('message', event => { 
+            console.log ('message from server:', event.data)
+            if(!resolved){
+                resolved = true;
+                clearTimeout(timeout);
+                resolve({
+                    success: true, 
+                    message: 'Message recieved',
+                    data: event.data
+                });
+            }
+        });
+
+        socket.addEventListener('close', event => {
+            console.log('Websocket connection closed:', event.code, event.reason)
+            if (!resolved){
+                resolved = true;
+                clearTimeout(timeout);
+                resolve({
+                    success: false,
+                    code: event.code,
+                    reason: event.reason
+                });
+            }
+        });
+
+        socket.addEventListener('error', error => {
+            console.log('error occurred', error);
+            if(!resolved) {
+                resolved = true;
+                clearTimeout(timeout)
+                reject(error);
+            }
+        });
+    });
+});
