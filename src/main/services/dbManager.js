@@ -1,0 +1,199 @@
+const Database = require('better-sqlite3');
+const path = require('path');
+const app = require('electron');
+
+const dbPath = path.join(app.getPath('userData'), 'ssh-credentials.db');
+const db = new Database(dbPath);
+
+const initDB = () => {
+    db.exec(`
+        create table if not exists users (
+            user_id integer primary key autoincrement, 
+            first_name text not null, 
+            last_name text not null, 
+            phone_number text not null,
+            email_address text not null
+        );   
+        
+        create table if not exists ssh_credentials (
+            id integer primary key autoincrement,
+            name text unique not null, 
+            host text not null,
+            username text not null, 
+            password text not null,
+            port integer default 22,
+            created_at datetime default current_timestamp,
+            updated_at datetime default current_timestamp 
+        );
+
+        create table if not exists remote_servers (
+            server_id integer primary key autoincrement,
+            ipv4_address text not null,
+            port_number text not null,
+            referential_name text,
+            description text
+        );
+
+        create table if not exists docker_containers (
+            container_id integer primary key autoincrement, 
+            server_id integer not null,
+            container_name text not null, 
+            image_path text not null,
+            status text not null,
+            created_at datetime default current_timestamp, 
+            updated_at datetime default current_timestamp,
+            foreign key (server_id) references remote_servers(server_id)
+        );
+    
+        create table if not exists container_logs (
+            container_log_id integer primary key autoincrement,
+            container_id integer not null,
+            server_id integer not null,
+            container_log_contents text not null,
+            log_date_time not null default current_timestamp,
+            foreign key (container_id) references docker_containers(container_id),
+            foreign key (server_id) references remote_servers(server_id)
+        );
+    `);
+    console.log('Database initialized');
+};
+
+
+
+// Insert into ssh_credentials
+const saveCredentials = (credData) => {
+    const { name, host, username, password, port = 22 } = credData;
+
+    const stmt = db.prepare(`
+        insert or replace into ssh_credentials (name, host, username, password, port, updated_at)
+        values (?, ?, ?, ?, ?, current_timestamp)
+`);
+    return stmt.run(name, host, username, password, port);
+};
+
+
+// get credentials by name
+const getCredentials = (name) => {
+    const stmt = db.prepare('select * from ssh_credentials where name = ?');
+    return stmt.get(name);
+};
+
+
+//list all creds by name password-less
+const listCredentials = (name) => {
+    const stmt = db.prepare('select * from ssh_credentials where name = ?');
+    return stmt.all()
+};
+
+
+//delete credentials by name
+const deleteCredentials = (name) => {
+    const stmt = db.prepare('delete from ssh_credentials where name = ?');
+    return stmt.run(name);
+};
+
+//insert into remote servers
+const insertRemoteServers = (remoteData) => {
+    const { ipv4_address, port_number, referential_name, description } = remoteData;
+    const stmt = db.prepare(`Insert or replace into remote_servers (ipv4_address, port_number, referential_name, description)
+                   values (?, ?, ?, ?)`)
+    return stmt.run(ipv4_address, port_number, referential_name, description);
+};
+
+//get remote server by ipv4 address  
+const getRemoteServer = (ipv4) => {
+    const stmt = db.prepare(`select * from remote_servers where ipv4_address = ?`);
+    return stmt.get(ipv4);
+};
+
+//list all remote servers managed by gnosis in the org 
+const listRemoteServers = () => {
+    const stmt = db.prepare(`select * from remote_servers`);
+    return stmt.all();
+};
+
+//delete from remote servers 
+const deleteRemoteServer = (ipv4) => {
+    const stmt = db.prepare(`delete from remote_servers where ipv4 = ?`);
+    stmt.run(ipv4);
+}
+
+//insert into docker_containers 
+const insertDockerContainer = (containerData) => {
+    const { server_id, container_name, image_path, status } = containerData;
+    const stmt = db.prepare(`
+        insert or replace into docker_containers (server_id, container_name, image_path, status, created_at, updated_at)
+        values(?, ?, ?, ?, current_timestamp, current_timestamp);
+    `);
+
+    stmt.run(server_id, container_name, image_path, status);
+};
+
+//get docker container by container name 
+const getDockerContainer = (containerName) => {
+    const stmt = db.prepare(`
+        select * from docker_containers where container_name like ?;
+    `)
+
+    return stmt.get(`%${containerName}%`);
+};
+
+//get all docker containers for the org 
+const listContainers = () => {
+    const stmt = db.prepare(`select * from docker_containers`);
+    return stmt.all();
+};
+
+//delete from docker containers 
+const deleteContainer = (containerId) => {
+    const stmt = db.prepare(`delete from docker_containers where container_id = ?`);
+    return stmt.run(containerId);
+};
+
+//insert into container_logs 
+const insertContainerLog = (logData) => {
+    const { container_id, server_id, container_log_contents, log_date_time } = logData;
+    const stmt = db.prepare(`
+        insert or replace into container_logs(container_id, server_id, container_log_contents, log_date_time)
+        values (?, ?, ?, current_timestamp);
+        `)
+
+    return stmt.run(logData);
+};
+
+//get container_logs for a specific container
+const getContainerLog = (containerId) => {
+    const stmt = db.prepare(`
+        select * from container_logs where container_id = ?    
+    `);
+
+    return stmt.all(containerId);
+};
+
+// delete from container_logs 
+const deleteContainerLog = (containerLogId) => {
+    const stmt = db.prepare(`
+        delete from container_logs where container_log_id = ?; 
+    `)
+
+    return stmt.run(containerLogId);
+}
+
+module.exports = {
+    initDB, 
+    saveCredentials,
+    getCredentials,
+    listCredentials,
+    deleteCredentials,
+    insertRemoteServers,
+    getRemoteServer,
+    listRemoteServers,
+    deleteRemoteServer,
+    insertDockerContainer,
+    getDockerContainer,
+    listContainers,
+    deleteContainer, 
+    insertContainerLog,
+    getContainerLog,
+    deleteContainerLog
+};

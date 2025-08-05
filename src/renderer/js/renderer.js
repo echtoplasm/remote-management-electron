@@ -1,3 +1,6 @@
+require('dotenv').config();
+
+
 const cpuSpecsDiv = document.querySelector("#cpu-specs");
 const memSpecsDiv = document.querySelector("#mem-specs");
 const osInfoDiv = document.querySelector("#os-info");
@@ -105,30 +108,25 @@ const testWebSockets = async(event, data) => {
 
 testWebSockets();
 
-const testSSHtunnel = async() => {
+const testDockerVersion = async() => {
     try{
-        const sshResults = await window.electronAPI.spawnSSHtunnel('8080', '22', 'zacha', '157.230.7.127');
-        console.log("ssh tunnel results:", sshResults);
-    }catch(err){
-        console.error("Unable to connect to sshtunnel from renderer.js", err.message);
+        const sshResults = await window.electronAPI.spawnSSHtunnel(
+            process.env.LOCAL_PORT,
+            process.env.REMOTE_PORT,
+            process.env.SSH_USER,
+            process.env.SSH_HOST,
+            process.env.SSH_PASSWORD
+        );
+        
+        console.log(sshResults);
+
+        const dockerVersion = await window.electronAPI.dockerCheck({});
+
+        console.log(dockerVersion);
+    
+    }catch(err){            
+        console.error('error in processing the docker version and sshresults:', err.message);
     }
-}
+};
 
-testSSHtunnel();
-
-const dockerVersion = async() => {
-    try{
-        const dockV = await window.electronAPI.dockerCheck();
-        if (dockV.success){
-            console.log('Docker is installed', dockV.version);
-            console.log('Linux distro', dockV.distro);
-        } else {
-            console.log('Docker not found', dockV.error);
-        }
-    }catch(err){
-        console.error("Unable to get docker version", err.message);
-    }
-}
-
-dockerVersion();
-
+testDockerVersion();
