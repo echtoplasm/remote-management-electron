@@ -2,61 +2,21 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>Hello World!</title>
+    <title>Welcome to Gnosis</title>
     <link rel="stylesheet" href="../renderer/css/index.css" />
   </head>
   <body>
-    <h1>System Stats Dashboard</h1>
-    <div class="card">
-        <h2>CPU specs</h2>
-        <div id="cpu-specs">
-        </div>
+    <div class="branding">
+        <h1 id="gnosis-name">Gnosis</h1>
+        <small id="tag-line">Knowledge of the unseen</small>
     </div>
     <div class="card">
-        <h2>Random Access Memory Specs</h2>
-        <div id="mem-specs">
-        </div>
+        <p>Show logo</p>
+        <p>Here we will give the user popups for any updates on their systems</p>
+        <p>Show short snippets of managed information</p>
+        <p>More GUI-esque</p>
     </div>
-    <div class="card">
-        <h2>Operating System Information</h2>
-        <div id="os-info">
-        </div>
-    </div>
-    <div class="card">
-        <h2>CurrentLoad</h2>
-        <div id="current-load">
-        </div>
-    </div>
-    <div class="card">
-        <h2>SSH-agent</h2>
-        <div id="ssh-agent"></div>
-        <form id="ssh-form">
-            <div id="host-div">
-                <label for="host">Host</label>
-                <input id="host"></input>
-            </div>
-            <div>
-                <label for="port">Port</label>
-                <input id="port"></input>
-            </div>
-            <div>
-                <label for="username">Username</label>
-                <input id="username"></input>
-            </div>
-            <div>
-                <label for="command">Command</label>
-                <input id="command"></input>
-            </div>
-            <div>
-                <label for="password">Password</label>
-                <input id="password"></input>
-            </div>
-            <button type="submit" value="connect">connect</button>
-        </form>
-        <div>
-            <div id="sshresults"></div>
-        </div>
-    </div>
-    <script defer src="../renderer/js/renderer.js"></script>
+    <script type="module" src="js/renderer.js"></script>
+    <script src="js/shared.js"></script>
   </body>
 </html>

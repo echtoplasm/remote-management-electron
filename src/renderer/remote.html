@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hello World!</title>
+    <link rel="stylesheet" href="css/index.css" />
+  </head>
+  <body>
+    <div class="content">
+        <div class="card">
+            <form id="ssh-form">
+                <div id="host-div">
+                    <label for="host">Host</label>
+                    <input id="host"></input>
+                </div>
+                <div>
+                    <label for="port">Port</label>
+                    <input id="port"></input>
+                </div>
+                <div>
+                    <label for="username">Username</label>
+                    <input id="username"></input>
+                </div>
+                <div>
+                    <label for="command">Command</label>
+                    <input id="command"></input>
+                </div>
+                <div>
+                    <label for="password">Password</label>
+                    <input type="password" id="password"></input>
+                </div>
+                <button type="submit" value="connect">connect</button>
+            </form>
+
+                <div>
+                    <div id="sshresults">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+        
+        </div>
+  </body>
+    <script src="js/shared.js"></script>
+    <script defer type="module" src="js/remote.js"></script> 
+</html>

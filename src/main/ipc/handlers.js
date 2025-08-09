@@ -1,7 +1,8 @@
-const { ipcMain } = require('electron');
+const { ipcMain, BrowserWindow } = require('electron');
 const { sshGuiExec, spawnTunnel, tunnelWebSockets, dockerVersion } = require ('../services/sshManager.js');
 const { sysInfo, currentLoad } =  require('../services/localSysInfo.js');
 const db = require('../services/dbManager.js');
+
 
 
 const setupIPC = () => {
@@ -96,11 +97,12 @@ const setupIPC = () => {
         return db.deleteContainerLog(containerLogId)
     });
 
-/*    
-    ipcMain.handle('' , async() => {
-
+    //IPC for handling page navifation to avoid ridiculous frontend dom manipulation
+    ipcMain.handle('navigate-to' , (event, page) => {
+        const window = BrowserWindow.fromWebContents(event.sender);
+        window.loadFile(`src/renderer/${page}`);
     });
-    
+/*    
     ipcMain.handle('' , async() => {
 
     });

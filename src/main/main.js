@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('node:path');
 const { setupIPC } = require('./ipc/handlers.js');
+require('dotenv').config();
 
 if (require('electron-squirrel-startup')) {
   app.quit();

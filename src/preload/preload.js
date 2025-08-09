@@ -46,6 +46,18 @@ contextBridge.exposeInMainWorld('electronAPI', {
         insertContainerLog: (logData) => ipcRenderer.invoke('insertContainerLog', logData),
         getContainerLog: (containerId) => ipcRenderer.invoke('getContainerLog', containerId),
         deleteContainerLog: (containerLogId) => ipcRenderer.invoke('deleteContainerLog', containerLogId)
+    },
+
+    env: {
+        LOCAL_PORT: process.env.LOCAL_PORT,
+        REMOTE_PORT: process.env.REMOTE_PORT,
+        SSH_USER: process.env.SSH_USER,
+        SSH_HOST: process.env.SSH_HOST,
+        SSH_PASSWORD: process.env.SSH_PASSWORD
+    },
+
+    nav: {
+        navigate: (page) => ipcRenderer.invoke('navigate-to', page) 
     }
 })
 

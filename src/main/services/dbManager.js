@@ -15,13 +15,15 @@ const db = new Database(dbPath);
 const initDB = () => {
     db.exec(`
         create table if not exists users (
-            user_id integer primary key autoincrement, 
-            first_name text not null, 
+            user_id integer primary key autoincrement,
+            username text not null unique, 
+            password text not null,
+            first_name text not null,
             last_name text not null, 
             phone_number text not null,
             email_address text not null
         );   
-        
+         
         create table if not exists ssh_credentials (
             id integer primary key autoincrement,
             name text unique not null, 
