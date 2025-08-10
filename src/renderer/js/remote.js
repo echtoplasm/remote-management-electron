@@ -1,3 +1,23 @@
+// fetch all servers being managed
+
+const fetchAllServers = async () => {
+    const results = await window.electronAPI.db.listRemoteServers();
+    console.log(results);
+
+    results.forEach(server => {
+        const { ipv4_address, port_number, referential_name, description } = server;
+        console.log(`Server: ${referential_name} at ${ipv4_address}`);       
+    })
+}
+
+//event listener 
+document.addEventListener('DOMContentLoaded', () => {
+    const remoteListBtn = document.querySelector("#remoteListBtn");
+    if(remoteListBtn) {
+        remoteListBtn.addEventListener('click', fetchAllServers);
+    }
+});
+
 let config = {};
 
 const sshForm = document.querySelector("#ssh-form");
@@ -34,4 +54,39 @@ sshForm.addEventListener('submit', async (event) =>{
     
 })
 
+
+remoteInsertForm.addEventListener('submit', async(event) => {
+    event.preventDefault();
+
+    const ipv4_address = document.querySelector("#ipAddr").value;
+    const port_number = document.querySelector("#portNumber").value;
+    const referential_name = document.querySelector("#refName").value;
+    const description = document.querySelector("#descrip").value;
+
+    const remoteList = document.querySelector("#remoteList");
+
+    let remoteData = { ipv4_address, port_number, referential_name, description };
+
+    console.log("remote data ot be inserted into DB upon submission: ", remoteData);
+    
+    try{
+        
+        const result = await window.electronAPI.db.insertRemoteServers(remoteData);
+        console.log("data inserted into db:", result);
+        console.log("data inserted successfully");
+        
+        remoteList.innerHTML = (`
+            <p>Successfully added server:</p>
+            <ul>
+                <li>ipv4 address: ${result.ipv4_address}</li>
+                <li>Port: ${result.port_number}</li>
+                <li>referential name: ${result.referential_name}</li>
+                <li>description: ${result.description}</li>
+            </ul>
+            `);
+
+    }catch(err){
+        console.error("Error in inserting data to database", err.message);
+    }
+});
 

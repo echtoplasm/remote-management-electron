@@ -37,11 +37,39 @@
 
                     </div>
                 </div>
+
+            <div id="remoteServerAdd">
+                <h2>Add remote server</h2>
+                <form id="remoteInsertForm">
+                    <div>
+                        <label for="ipAddr">Ip address</label>
+                        <input id="ipAddr"></input>
+                    </div>
+                    <div>
+                        <label for="portNumber">Port number<label>
+                        <input id="portNumber"></input>
+                    </div>
+                    <div>
+                        <label for="refName">Referential Name</label>
+                        <input id="refName"></input>
+                    </div>
+                    <div>
+                        <label for="descrip">Description</label>
+                        <input id="descrip"></input>
+                    </div>
+                    <div>
+                        <button type="submit" value="add">Add<button>
+                    </div>
+                </form>
+                <div id="remoteList">
+                
+                </div>
             </div>
-        </div>
-        <div>
-        
-        </div>
+
+            <div id="remoteServerList">
+                    <button id="remoteListBtn">List Servers</button>
+            </div>
+            
   </body>
     <script src="js/shared.js"></script>
     <script defer type="module" src="js/remote.js"></script> 

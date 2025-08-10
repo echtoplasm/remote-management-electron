@@ -2,6 +2,7 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('node:path');
 const { setupIPC } = require('./ipc/handlers.js');
 require('dotenv').config();
+const { initDB } = require('../main/services/dbManager.js')
 
 if (require('electron-squirrel-startup')) {
   app.quit();
@@ -27,7 +28,9 @@ app.whenReady().then(() => {
   createWindow();
   
   setupIPC();
-  
+ 
+  initDB();
+
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
