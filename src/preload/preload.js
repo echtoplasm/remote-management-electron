@@ -14,7 +14,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
     ssh: {
         sshConnectExec: (config, command) => ipcRenderer.invoke('sshUserExec', config, command),
         spawnSSHtunnel: (localPort, remotePort, remoteUser, remoteHost, password) => ipcRenderer.invoke('spawnSSHtunnel', localPort, remotePort, remoteUser, remoteHost, password),
-        dockerCheck: (data) => ipcRenderer.invoke('dockerVersion', data)
+        dockerCheck: (data) => ipcRenderer.invoke('dockerVersion', data),
+        installDockerForOS: (selectedOS) => ipcRenderer.invoke('installDockerForOS', selectedOS)
     },
 
     //websocket

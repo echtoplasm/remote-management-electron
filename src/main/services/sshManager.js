@@ -67,7 +67,7 @@ const spawnTunnel = (localPort, remotePort, remoteUser, remoteHost, password) =>
             conn.on('ready', () =>{
                 console.log('SSH client for tunneling :::: ready');
                 conn.forwardIn('127.0.0.1', localPort, (err) => {
-                    if (err) {
+       if (err) {
                         return reject(err);
                     }else{
                         console.log('SSH tunnel established on port', localPort);
@@ -207,4 +207,35 @@ const dockerVersion = async(data) => {
 
 
 module.exports = { sshGuiExec, spawnTunnel, dockerVersion, tunnelWebSockets };
+
+
+const installDockerForOS = async (selectedOS) => {
+    const dockerCommands = {
+        ubuntu: {
+            prereqs: 'sudo apt-get update && sudo apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release',
+            config: 'curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg',
+            command: 'sudo apt-get update && sudo apt-get install -y docker-ce docker-ce-cli containerd.io'
+        },
+        centos: {
+            prereqs: 'sudo yum install -y yum-utils',
+            config: 'sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo',
+            command: 'sudo yum install -y docker-ce docker-ce-cli containerd.io'
+        },
+        debian: {
+            prereqs: 'sudo apt-get update && sudo apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release',
+            config: 'curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg',
+            command: 'sudo apt-get update && sudo apt-get install -y docker-ce docker-ce-cli containerd.io'
+        },
+        rhel: {
+            prereqs: 'sudo dnf install -y dnf-plugins-core',
+            config: 'sudo dnf config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo',
+            command: 'sudo dnf install -y docker-ce docker-ce-cli containerd.io'
+        }
+    };   
+    
+    return dockerCommands[selectedOS] || null;
+
+}
+
+module.exports = { sshGuiExec, spawnTunnel, dockerVersion, tunnelWebSockets, installDockerForOS };
 

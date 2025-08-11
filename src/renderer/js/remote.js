@@ -66,7 +66,7 @@ sshForm.addEventListener('submit', async (event) =>{
     const username = document.querySelector("#username").value;
     const command = document.querySelector("#command").value;
     const password = document.querySelector("#password").value;
-    const sshResults = document.querySelector("#sshresults");
+    const sshResults = document.querySelector("#stdoutDiv");
 
     const portInt = parseInt(port);
 

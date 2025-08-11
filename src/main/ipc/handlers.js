@@ -1,5 +1,5 @@
 const { ipcMain, BrowserWindow } = require('electron');
-const { sshGuiExec, spawnTunnel, tunnelWebSockets, dockerVersion } = require ('../services/sshManager.js');
+const { sshGuiExec, spawnTunnel, tunnelWebSockets, dockerVersion, installDockerForOS } = require ('../services/sshManager.js');
 const { sysInfo, currentLoad } =  require('../services/localSysInfo.js');
 const db = require('../services/dbManager.js');
 
@@ -31,7 +31,11 @@ const setupIPC = () => {
     ipcMain.handle('dockerVersion', async(event, data) => {
         return dockerVersion(data);
     });
-    
+   
+    ipcMain.handle('installDockerForOS', async(event, selectedOS) => {
+        return installDockerForOS(selectedOS);
+    });
+
     // DB IPC's 
     ipcMain.handle('saveCredentials', async(event, credData) => {
         return db.saveCredentials(credData);
