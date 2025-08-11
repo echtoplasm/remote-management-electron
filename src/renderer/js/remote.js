@@ -1,5 +1,4 @@
 // fetch all servers being managed
-
 const fetchAllServers = async () => {
     const results = await window.electronAPI.db.listRemoteServers();
     console.log(results);
@@ -8,7 +7,44 @@ const fetchAllServers = async () => {
         const { ipv4_address, port_number, referential_name, description } = server;
         console.log(`Server: ${referential_name} at ${ipv4_address}`);       
     })
-}
+
+    /* USE THE array.map method to rendering the server on the UI */
+    
+    const rsListDiv = document.getElementById("rslist");
+
+    rsListDiv.innerHTML = '';
+        
+    results.forEach(server => {
+        const { ipv4_address, port_number, referential_name, description } = server;
+        const newServer = document.createElement('div');
+        newServer.className = 'server-item';
+        newServer.innerHTML = (`
+            <h3>Name: ${referential_name}</h3>
+            <ul>
+                <li>Ip address: ${ipv4_address}</li>
+                <li>Description: ${description}</li>
+            </ul>
+        `);
+
+        rsListDiv.appendChild(newServer);
+    });    
+};
+
+
+const collapseServerList = () => {
+    const rsListDiv = document.getElementById("rslist");
+    rsListDiv.innerHTML = ('');
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    const collapseListBtn = document.querySelector("#collapseListBtn");
+    const rsListDiv = document.getElementById("rslist");
+
+    if(collapseListBtn){
+        collapseListBtn.addEventListener('click', collapseServerList);
+    };
+});
+
 
 //event listener 
 document.addEventListener('DOMContentLoaded', () => {

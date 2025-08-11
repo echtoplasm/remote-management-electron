@@ -182,9 +182,10 @@ const dockerVersion = async(data) => {
                 conn.end;
 
                 if (code === 0) {
-                    resolve(output);
-                } else {
-                    reject(new Error(`command failed with exit code ${code}`))
+                    output += data.toString();
+                    resolve({ dockerInstalled: true, version: output });
+                } else if(code !== 0) {
+                    resolve({ dockerInstalled: false });
                 }
             }).on('data', (data) => {
                     output += data.toString();

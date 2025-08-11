@@ -9,32 +9,33 @@
     <div class="content">
         <div class="card">
             <form id="ssh-form">
+                <h2>SSH simple command GUI</h2>
                 <div id="host-div">
                     <label for="host">Host</label>
-                    <input id="host"></input>
+                    <input type="text" id="host"></input>
                 </div>
                 <div>
                     <label for="port">Port</label>
-                    <input id="port"></input>
+                    <input type="text" id="port"></input>
                 </div>
                 <div>
                     <label for="username">Username</label>
-                    <input id="username"></input>
+                    <input type="text" id="username"></input>
                 </div>
                 <div>
                     <label for="command">Command</label>
-                    <input id="command"></input>
+                    <input type="text" id="command"></input>
                 </div>
                 <div>
                     <label for="password">Password</label>
                     <input type="password" id="password"></input>
                 </div>
-                <button type="submit" value="connect">connect</button>
+                <button class="btn" type="submit" value="connect">connect</button>
             </form>
 
                 <div>
                     <div id="sshresults">
-
+                    <h2>SSH results</h2>
                     </div>
                 </div>
 
@@ -43,22 +44,22 @@
                 <form id="remoteInsertForm">
                     <div>
                         <label for="ipAddr">Ip address</label>
-                        <input id="ipAddr"></input>
+                        <input type="text" id="ipAddr"></input>
                     </div>
                     <div>
                         <label for="portNumber">Port number<label>
-                        <input id="portNumber"></input>
+                        <input type="text" id="portNumber"></input>
                     </div>
                     <div>
                         <label for="refName">Referential Name</label>
-                        <input id="refName"></input>
+                        <input type="text" id="refName"></input>
                     </div>
                     <div>
                         <label for="descrip">Description</label>
-                        <input id="descrip"></input>
+                        <input type="text" id="descrip"></input>
                     </div>
                     <div>
-                        <button type="submit" value="add">Add<button>
+                        <button class="btn" type="submit" value="add">Add</button>
                     </div>
                 </form>
                 <div id="remoteList">
@@ -67,7 +68,12 @@
             </div>
 
             <div id="remoteServerList">
-                    <button id="remoteListBtn">List Servers</button>
+                    <h1>Managed Servers</h1>
+                    <button class="btn" id="remoteListBtn">List Servers</button>
+                    <button class="btn" id="collapseListBtn">Collapse List</button>
+                    <div id="rslist">
+                        
+                    </div>
             </div>
             
   </body>
