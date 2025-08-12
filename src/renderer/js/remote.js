@@ -17,7 +17,7 @@ const fetchAllServers = async () => {
     results.forEach(server => {
         const { ipv4_address, port_number, referential_name, description } = server;
         const newServer = document.createElement('div');
-        newServer.className = 'server-item';
+        newServer.className = 'server-item'; // need to style this class
         newServer.innerHTML = (`
             <h3>Name: ${referential_name}</h3>
             <ul>

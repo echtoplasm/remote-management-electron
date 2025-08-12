@@ -322,6 +322,28 @@ select:disabled {
 }
 
 
+/*Remote servers layout*/  
+#remote-server-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 1rem;
+}
+
+#gui-ssh-card {
+    grid-column: 1 / -1; /* Spans full width */
+    grid-row: 2; /* Bottom row */
+}
+
+#remote-server-add {
+    grid-column: 1; /* Left column */
+    grid-row: 1; /* Top row */
+}
+
+#remote-server-list {
+    grid-column: 2; /* Right column */
+    grid-row: 1; /* Top row */
+}
 /* SSH Results */
 #sshresults {
   margin-top: 1.5rem;
@@ -373,6 +395,7 @@ select:disabled {
 }
 
 /* Responsive design */
+
 @media (max-width: 768px) {
   #navbar {
     flex-direction: column;

@@ -113,7 +113,7 @@ const dockerPs = async() => {
             <li>Created at: ${dockerJson.CreatedAt}</li>
             <li>Image: ${dockerJson.Image}</li>
         </ul>
-        <button onClick="addToManagement('${dockerJSON.ID})">
+        <button onClick="addToManagement('${dockerJson.ID})">
             Add to Management 
         </button>
     `);
