@@ -13,6 +13,8 @@ if(process.env.NODE_ENV === 'test') {
 const db = new Database(dbPath);
 
 const initDB = () => {
+    db.exec('DROP TABLE IF EXISTS ssh_credentials;');
+
     db.exec(`
         create table if not exists users (
             user_id integer primary key autoincrement,
@@ -25,14 +27,13 @@ const initDB = () => {
         );   
          
         create table if not exists ssh_credentials (
-            id integer primary key autoincrement,
-            name text unique not null, 
-            host text not null,
-            username text not null, 
-            password text not null,
-            port integer default 22,
+            credentials_id integer primary key autoincrement, 
+            ipv4_address text not null,
+            port_number integer default 22,
+            username text not null,
+            password text not null, 
             created_at datetime default current_timestamp,
-            updated_at datetime default current_timestamp 
+            updated_at datetime default current_timestamp
         );
 
         create table if not exists remote_servers (
@@ -71,13 +72,13 @@ const initDB = () => {
 
 // Insert into ssh_credentials
 const saveCredentials = (credData) => {
-    const { name, host, username, password, port = 22 } = credData;
+    const { ipv4_address, port_number, username, password} = credData;
 
     const stmt = db.prepare(`
-        insert or replace into ssh_credentials (name, host, username, password, port, updated_at)
-        values (?, ?, ?, ?, ?, current_timestamp)
+        insert or replace into ssh_credentials (ipv4_address, port_number, username, password)
+        values (?, ?, ?, ?)
 `);
-    return stmt.run(name, host, username, password, port);
+    return stmt.run(ipv4_address, port_number, username, password );
 };
 
 

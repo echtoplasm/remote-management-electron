@@ -163,6 +163,91 @@ h1, h2, h3 {
   padding-bottom: 0.5rem;
 }
 
+.notif-card {
+  background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
+  border: 1px solid #404040;
+  border-radius: 12px;
+  padding: 2rem;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  border-color: #ea580c;
+  text-align: center;
+}
+
+.notif-card h2 {
+  color: #ea580c;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: 400;
+  border-bottom: 2px solid #404040;
+  padding-bottom: 0.5rem;
+};
+
+.notif-card ul, 
+.notif-card li {
+    text-decoration: none;
+    list-style: none;
+}
+
+.notif-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 12px 48px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/*Server itemized list for the remoteservers.html */
+.server-item {
+    background: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 12px;
+    margin-top: 1rem;
+    color: #e0e0e0;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace; /* Terminal font */
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.server-item:hover {
+    background: #333;
+    border-color: #ea580c;
+}
+
+.server-item h3 {
+    margin: 0 0 12px 0;
+    color: #fff;
+    font-size: 1.1em;
+    font-weight: 600;
+    border-bottom: 1px solid #444;
+    padding-bottom: 8px;
+}
+
+.server-item ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.server-item li {
+    padding: 4px 0;
+    color: #ccc;
+    font-size: 0.9em;
+}
+
+/* Optional: Add some terminal-style accents */
+.server-item li::before {
+    content: "• ";
+    color: #888;
+    margin-right: 8px;
+}
+
+
+
 /* Form styles */
 #ssh-form {
   margin-top: 1.5rem;

@@ -1,3 +1,20 @@
+const deleteServerBtn = document.getElementById('deleteServerBtn');
+const scanForContainerBtn = document.getElementById('scanForContainerBtn');
+
+const deleteServer = async () => {
+    
+} 
+
+
+
+scanForContainerBtn.addEventLister('click', )
+
+deleteServerBtn.addEventLister('click', )
+
+
+
+
+
 // fetch all servers being managed
 const fetchAllServers = async () => {
     const results = await window.electronAPI.db.listRemoteServers();
@@ -24,6 +41,8 @@ const fetchAllServers = async () => {
                 <li>Ip address: ${ipv4_address}</li>
                 <li>Description: ${description}</li>
             </ul>
+            <button id="deleteServerBtn" class="btn">Delete Server</button>
+            <button id="scanForContainerBtn" class="btn">Scan for docker containers</button>
         `);
 
         rsListDiv.appendChild(newServer);
@@ -104,22 +123,39 @@ remoteInsertForm.addEventListener('submit', async(event) => {
     let remoteData = { ipv4_address, port_number, referential_name, description };
 
     console.log("remote data ot be inserted into DB upon submission: ", remoteData);
+   
+    //insert into ssh credentials: {name, host, username, password, port, updated_at::default now() };
     
+    const username = document.querySelector("#username").value;
+    const password = document.querySelector("#password").value;
+
+    let sshCredentials = { ipv4_address, port_number, username, password};
+    console.log("ssh credentials to be inserted into the ssh_credentials table", sshCredentials);
+    
+    const remoteListNotif = document.createElement('div');
+
+    remoteListNotif.className = 'notif-card';
+
     try{
         
         const result = await window.electronAPI.db.insertRemoteServers(remoteData);
         console.log("data inserted into db:", result);
+
+        const sshCredsResult = await window.electronAPI.db.saveCredentials(sshCredentials);
+        console.log("data inserted into the ssh_credentials table");
         console.log("data inserted successfully");
         
-        remoteList.innerHTML = (`
-            <p>Successfully added server:</p>
+        remoteListNotif.innerHTML = (`
+            <h2>Successfully added server:</h2>
             <ul>
-                <li>ipv4 address: ${result.ipv4_address}</li>
-                <li>Port: ${result.port_number}</li>
-                <li>referential name: ${result.referential_name}</li>
-                <li>description: ${result.description}</li>
+                <li>ipv4 address: ${ipv4_address}</li>
+                <li>Port: ${port_number}</li>
+                <li>referential name: ${referential_name}</li>
+                <li>description: ${description}</li>
             </ul>
             `);
+
+        remoteList.appendChild(remoteListNotif); 
 
     }catch(err){
         console.error("Error in inserting data to database", err.message);

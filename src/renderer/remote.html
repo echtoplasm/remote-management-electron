@@ -44,14 +44,15 @@
             </div>
         <div class="card" id="remote-server-add">
             <div id="remoteServerAdd">
-                <h2>Add remote server</h2>
+                <h1>Add remote server</h1>
                 <form id="remoteInsertForm">
+                    <h2>Logistical Information</h2>
                     <div>
                         <label for="ipAddr">Ip address</label>
                         <input type="text" id="ipAddr"></input>
                     </div>
                     <div>
-                        <label for="portNumber">Port number<label>
+                        <label for="portNumber">Port number for gnosis ssh connection<label>
                         <input type="text" id="portNumber"></input>
                     </div>
                     <div>
@@ -62,12 +63,21 @@
                         <label for="descrip">Description</label>
                         <input type="text" id="descrip"></input>
                     </div>
+                    <h2>SSH Credentials for Remote Server</h2>
+                    <small>Gnosis uses websockets tunneled through an SSH connection in order to provide you with our services</small>
+                    <div>
+                        <label for="username">SSH username</label>
+                        <input id="username" type="text"></input>
+                    </div>
+                    <div>
+                        <label for="password">SSH password</label>
+                        <input id="password" type="password"></input>
+                    </div>
                     <div>
                         <button class="btn" type="submit" value="add">Add</button>
                     </div>
                 </form>
                 <div id="remoteList">
-                
                 </div>
             </div>
         </div>
