@@ -1,6 +1,7 @@
 const { ipcMain, BrowserWindow } = require('electron');
 const { sshGuiExec, spawnTunnel, tunnelWebSockets, dockerVersion, installDockerForOS } = require ('../services/sshManager.js');
 const { sysInfo, currentLoad } =  require('../services/localSysInfo.js');
+const { dockerPs } = require('../services/dockerService.js');
 const db = require('../services/dbManager.js');
 
 
@@ -16,7 +17,7 @@ const setupIPC = () => {
     });
 
     //SSH IPC's
-    ipcMain.handle('sshUserExec', async(event, config, command) => {
+    ipcMain.handle('sshConnExec', async(event, config, command) => {
         return sshGuiExec(config, command);
     });
     
@@ -44,6 +45,12 @@ const setupIPC = () => {
     ipcMain.handle('getCredentials', async(event ,name) => {
         return db.getCredentials(name);
     });
+
+    //Docker IPCS's 
+    
+    ipcMain.handle('dockerPs', async() => {
+        return dockerPs()
+    })
     
     //change the sql method because this is almost the exact same as get creds
     ipcMain.handle('listCredentials', async(event, name) => {

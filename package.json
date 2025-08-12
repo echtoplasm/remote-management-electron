@@ -5,6 +5,7 @@
   "description": "My Electron application description",
   "main": "src/main/main.js",
   "scripts": {
+    "prestart": "npm rebuild better-sqlite3 --build-from-source",
     "start": "electron-forge start",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -40,6 +41,7 @@
     "@electron-forge/plugin-fuses": "^7.8.1",
     "@electron/fuses": "^1.8.0",
     "electron": "37.2.1",
+    "electron-rebuild": "^3.2.9",
     "jest": "^30.0.5"
   }
 }

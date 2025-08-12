@@ -12,7 +12,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     
     //ssh ops
     ssh: {
-        sshConnectExec: (config, command) => ipcRenderer.invoke('sshUserExec', config, command),
+        sshConnectExec: (config, command) => ipcRenderer.invoke('sshConnExec', config, command),
         spawnSSHtunnel: (localPort, remotePort, remoteUser, remoteHost, password) => ipcRenderer.invoke('spawnSSHtunnel', localPort, remotePort, remoteUser, remoteHost, password),
         dockerCheck: (data) => ipcRenderer.invoke('dockerVersion', data),
         installDockerForOS: (selectedOS) => ipcRenderer.invoke('installDockerForOS', selectedOS)
@@ -59,6 +59,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
     nav: {
         navigate: (page) => ipcRenderer.invoke('navigate-to', page) 
+    },
+
+    docker: {
+        dockerPs: () => ipcRenderer.invoke('dockerPs') 
     }
 })
 

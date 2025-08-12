@@ -102,6 +102,28 @@ const testDockerVersion = async() => {
 
 testDockerVersion();
 
-module.exports = {
-    testDockerVersion
-}
+const dockerPs = async() => {
+    const dockerJson = await window.electronAPI.docker.dockerPs();
+    
+    console.log(dockerJson);
+
+    const dockerJsonHTML = (`
+        <h3>${dockerJson.Names}</h3>
+        <ul>
+            <li>Created at: ${dockerJson.CreatedAt}</li>
+            <li>Image: ${dockerJson.Image}</li>
+        </ul>
+        <button onClick="addToManagement('${dockerJSON.ID})">
+            Add to Management 
+        </button>
+    `);
+    
+    const dockerDiv = document.getElementById('dockerContainer');
+
+    dockerDiv.innerHTML = dockerJsonHTML;
+
+};
+
+dockerPs();
+
+

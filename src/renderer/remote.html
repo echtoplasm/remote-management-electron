@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="css/index.css" />
   </head>
   <body>
+    <div id="remote-server-container">
     <div class="content">
         <div class="card">
             <form id="ssh-form">
@@ -32,9 +33,7 @@
                 </div>
                 <button class="btn" type="submit" value="connect">connect</button>
             </form>
-
-                <div>
-                    
+                <div>      
                     <div id="sshresults">
                         <h2 id="stdout-title">SSH Results</h2>
                         <div id="stdoutDiv">
@@ -42,7 +41,8 @@
                         </div>
                     </div>
                 </div>
-
+            </div>
+        <div class="card">
             <div id="remoteServerAdd">
                 <h2>Add remote server</h2>
                 <form id="remoteInsertForm">
@@ -70,7 +70,8 @@
                 
                 </div>
             </div>
-
+        </div>
+        <div class="card">
             <div id="remoteServerList">
                     <h1>Managed Servers</h1>
                     <button class="btn" id="remoteListBtn">List Servers</button>
@@ -79,7 +80,8 @@
                         
                     </div>
             </div>
-            
+        </div>
+    </div>
   </body>
     <script src="js/shared.js"></script>
     <script defer type="module" src="js/remote.js"></script> 
