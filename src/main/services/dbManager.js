@@ -14,14 +14,13 @@ const db = new Database(dbPath);
 
 const initDB = () => {
     // MAKE SURE TO REMOVE THESE DROP STATMENTS!
-    /*
+/*
     db.exec('drop table if exists users');
     db.exec('drop table if exists remote_servers');
     db.exec('DROP TABLE IF EXISTS ssh_credentials;');
     db.exec('drop table if exists docker_containers');
     db.exec('drop table if exists container_logs');
-    */ 
-
+*/
     db.exec('PRAGMA foreign_keys = ON;');
 
     db.exec(`
@@ -111,6 +110,23 @@ const listCredentials = (ipv4_address) => {
 const deleteCredentials = (ipv4_address, port) => {
     const stmt = db.prepare('delete from ssh_credentials where ipv4_address = ? and port = ?');
     return stmt.run(ipv4_address, port);
+};
+
+//get server and credentials for docker management
+const getServerCreds = (serverId) => {
+    const stmt = db.prepare(
+        `SELECT 
+            rs.ipv4_address,
+            rs.port_number,
+            sc.username, 
+            sc.password
+         FROM remote_servers rs
+         JOIN ssh_credentials sc on rs.server_id = sc.server_id
+         WHERE rs.server_id = ?
+        `);
+    
+    return stmt.get(serverId);
+    
 };
 
 //insert into remote servers
@@ -216,5 +232,6 @@ module.exports = {
     deleteContainer, 
     insertContainerLog,
     getContainerLog,
-    deleteContainerLog
+    deleteContainerLog,
+    getServerCreds
 };

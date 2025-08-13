@@ -46,7 +46,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
         //container logs table 
         insertContainerLog: (logData) => ipcRenderer.invoke('insertContainerLog', logData),
         getContainerLog: (containerId) => ipcRenderer.invoke('getContainerLog', containerId),
-        deleteContainerLog: (containerLogId) => ipcRenderer.invoke('deleteContainerLog', containerLogId)
+        deleteContainerLog: (containerLogId) => ipcRenderer.invoke('deleteContainerLog', containerLogId),
+
+        //get server credentials for remote server and for ssh creds to be passed to dockerPs
+        getServerCreds: (serverId) => ipcRenderer.invoke('getServerCreds', serverId)
     },
 
     env: {

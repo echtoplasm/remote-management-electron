@@ -1,5 +1,5 @@
 const { ipcMain, BrowserWindow } = require('electron');
-const { sshGuiExec, spawnTunnel, tunnelWebSockets, dockerVersion, installDockerForOS } = require ('../services/sshManager.js');
+const { sshGuiExec, spawnTunnel, tunnelWebSockets, dockerVersion, installDockerForOS, getServerCreds } = require ('../services/sshManager.js');
 const { sysInfo, currentLoad } =  require('../services/localSysInfo.js');
 const { dockerPs } = require('../services/dockerService.js');
 const db = require('../services/dbManager.js');
@@ -60,6 +60,12 @@ const setupIPC = () => {
     ipcMain.handle('deleteCredentials', async(event, name) => {
         return db.deleteCredentials(name);
     });
+
+    //get server credentials to be passed between remotejs and dockerjs 
+
+    ipcMain.handle('getServerCreds', async(event, serverId) => {
+        return db.getServerCreds(serverId);
+    })
     
     //REMOTE SERVER TABLE IPC's
     ipcMain.handle('insertRemoteServers' , async(event, remoteData) => {

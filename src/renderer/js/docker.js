@@ -1,3 +1,6 @@
+//This is for downloading if the system does not have docker 
+
+
 const showOSSelection = () => {
     return new Promise((resolve, reject) => {
         const modalHTML = `
@@ -102,6 +105,8 @@ const testDockerVersion = async() => {
 
 testDockerVersion();
 
+
+// Shows all docker containers running on the system 
 const dockerPs = async() => {
     const dockerJson = await window.electronAPI.docker.dockerPs();
     

@@ -1,6 +1,13 @@
 const scanForContainerBtn = document.getElementById('scanForContainerBtn');
 
-const deleteServer = async (ipv4_address) => {
+const getServerCreds = async(serverId) => {
+    const creds = await window.electronAPI.db.getServerCreds(serverId);
+    console.log(creds);  
+}; 
+
+window.getServerCreds = getServerCreds;
+
+const deleteServer = async(ipv4_address) => {
 
     const serverElement = document.getElementById(ipv4_address);
     
@@ -26,8 +33,10 @@ const fetchAllServers = async () => {
     rsListDiv.innerHTML = '';
         
     results.forEach(server => {
-        const { ipv4_address, port_number, referential_name, description } = server;
-        
+        console.log('about to destructure:', server);
+        const { server_id, ipv4_address, port_number, referential_name, description } = server;
+        console.log('destructured server_id:', server_id);
+
         const newServer = document.createElement('div');
         newServer.className = 'server-item';// need to style this class
         newServer.id = ipv4_address
@@ -38,7 +47,7 @@ const fetchAllServers = async () => {
                 <li>Description: ${description}</li>
             </ul>
             <button class="btn delete-btn">Delete Server</button>
-            <button class="btn scan-btn" class="btn">Scan for docker containers</button>
+            <button class="btn scan-btn" class="btn" onClick="getServerCreds(${server_id})">Scan for docker containers</button>
         `);
 
         const rsListDiv = document.getElementById("rslist");
@@ -121,7 +130,8 @@ remoteInsertForm.addEventListener('submit', async(event) => {
     const port_number = document.querySelector("#portNumber").value;
     const referential_name = document.querySelector("#refName").value;
     const description = document.querySelector("#descrip").value;
-
+    const username = document.querySelector("#username").value;
+    const password = document.querySelector("#password").value;
     const remoteList = document.querySelector("#remoteList");
 
     let remoteData = { ipv4_address, port_number, referential_name, description };
@@ -130,24 +140,21 @@ remoteInsertForm.addEventListener('submit', async(event) => {
    
     //insert into ssh credentials: {name, host, username, password, port, updated_at::default now() };
     
-    const username = document.querySelector("#username").value;
-    const password = document.querySelector("#password").value;
-
-    
     const remoteListNotif = document.createElement('div');
 
     remoteListNotif.className = 'notif-card';
 
     try{
-        
         const result = await window.electronAPI.db.insertRemoteServers(remoteData);
         console.log("data inserted into db:", result);
 
         let sshCredentials = { server_id: result.lastInsertRowid , ipv4_address, port_number, username, password};
         console.log(sshCredentials);
+        
+        
 
         const sshCredsResult = await window.electronAPI.db.saveCredentials(sshCredentials);
-        console.log("data inserted into the ssh_credentials table");
+        console.log("data inserted into the ssh_credentials table", sshCredentials);
         console.log("data inserted successfully");
         
         remoteListNotif.innerHTML = (`
@@ -166,4 +173,5 @@ remoteInsertForm.addEventListener('submit', async(event) => {
         console.error("Error in inserting data to database", err.message);
     }
 });
+
 
