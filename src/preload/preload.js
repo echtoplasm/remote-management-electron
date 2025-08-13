@@ -27,15 +27,15 @@ contextBridge.exposeInMainWorld('electronAPI', {
     db: {
         //users table
         saveCredentials: (credData) => ipcRenderer.invoke('saveCredentials', credData),
-        getCredentials: (name) => ipcRenderer.invoke('getCredentials', name),
-        listCredentials: (name) => ipcRenderer.invoke('listCredentials', name),
-        deleteCredentials: (name) => ipcRenderer.invoke('deleteCredentials', name),
+        getCredentials: (ipv4_address) => ipcRenderer.invoke('getCredentials', ipv4_address),
+        listCredentials: (ipv4_address) => ipcRenderer.invoke('listCredentials', ipv4_address),
+        deleteCredentials: (ipv4_address, port) => ipcRenderer.invoke('deleteCredentials', ipv4_address, port),
         
         //remote servers table
         insertRemoteServers: (remoteData) => ipcRenderer.invoke('insertRemoteServers', remoteData),
-        getRemoteServer: (ipv4) => ipcRenderer.invoke('getRemoteServer', ipv4),
+        getRemoteServer: (ipv4_addresss) => ipcRenderer.invoke('getRemoteServer', ipv4_address),
         listRemoteServers: () => ipcRenderer.invoke('listRemoteServers'),
-        deleteRemoteServer: (ipv4) => ipcRenderer.invoke('deleteRemoteServer', ipv4),
+        deleteRemoteServer: (ipv4_address) => ipcRenderer.invoke('deleteRemoteServer', ipv4_address),
         
         //docker containers table 
         insertDockerContainer: (containerData) => ipcRenderer.invoke('insertDockerContainer', containerData),

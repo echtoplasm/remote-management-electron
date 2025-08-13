@@ -66,16 +66,16 @@ const setupIPC = () => {
         return db.insertRemoteServers(remoteData);    
     });
 
-    ipcMain.handle('getRemoteServer' , async(event, ipv4) => {
-        return db.getRemoteServer(ipv4);
+    ipcMain.handle('getRemoteServer' , async(event, ipv4_address) => {
+        return db.getRemoteServer(ipv4_address);
     });
     
     ipcMain.handle('listRemoteServers' , async(event) => {
         return db.listRemoteServers();
     });
 
-    ipcMain.handle('deleteRemoteServer' , async(event, ipv4) => {
-        return db.deleteRemoteServer(ipv4);
+    ipcMain.handle('deleteRemoteServer' , async(event, ipv4_address) => {
+        return db.deleteRemoteServer(ipv4_address);
     });
     
     //DOCKER CONTAINERS TABLE

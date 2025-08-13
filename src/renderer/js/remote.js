@@ -1,18 +1,14 @@
-const deleteServerBtn = document.getElementById('deleteServerBtn');
 const scanForContainerBtn = document.getElementById('scanForContainerBtn');
 
-const deleteServer = async () => {
+const deleteServer = async (ipv4_address) => {
+
+    const serverElement = document.getElementById(ipv4_address);
     
+    if (serverElement){
+        serverElement.remove()
+    }
+    let deleteResult = await window.electronAPI.db.deleteRemoteServer(ipv4_address);
 } 
-
-
-
-scanForContainerBtn.addEventLister('click', )
-
-deleteServerBtn.addEventLister('click', )
-
-
-
 
 
 // fetch all servers being managed
@@ -24,28 +20,36 @@ const fetchAllServers = async () => {
         const { ipv4_address, port_number, referential_name, description } = server;
         console.log(`Server: ${referential_name} at ${ipv4_address}`);       
     })
-
-    /* USE THE array.map method to rendering the server on the UI */
     
-    const rsListDiv = document.getElementById("rslist");
 
+    const rsListDiv = document.getElementById("rslist");
     rsListDiv.innerHTML = '';
         
     results.forEach(server => {
         const { ipv4_address, port_number, referential_name, description } = server;
+        
         const newServer = document.createElement('div');
-        newServer.className = 'server-item'; // need to style this class
+        newServer.className = 'server-item';// need to style this class
+        newServer.id = ipv4_address
         newServer.innerHTML = (`
             <h3>Name: ${referential_name}</h3>
             <ul>
                 <li>Ip address: ${ipv4_address}</li>
                 <li>Description: ${description}</li>
             </ul>
-            <button id="deleteServerBtn" class="btn">Delete Server</button>
-            <button id="scanForContainerBtn" class="btn">Scan for docker containers</button>
+            <button class="btn delete-btn">Delete Server</button>
+            <button class="btn scan-btn" class="btn">Scan for docker containers</button>
         `);
 
+        const rsListDiv = document.getElementById("rslist");
+        const deleteBtn = newServer.querySelector('.delete-btn');
+        const scanBtn = newServer.querySelector('.scan-btn');
+
+
+        deleteBtn.addEventListener('click', () => deleteServer(ipv4_address));
+
         rsListDiv.appendChild(newServer);
+
     });    
 };
 
@@ -122,15 +126,13 @@ remoteInsertForm.addEventListener('submit', async(event) => {
 
     let remoteData = { ipv4_address, port_number, referential_name, description };
 
-    console.log("remote data ot be inserted into DB upon submission: ", remoteData);
+    console.log("remote data to be inserted into DB upon submission: ", remoteData);
    
     //insert into ssh credentials: {name, host, username, password, port, updated_at::default now() };
     
     const username = document.querySelector("#username").value;
     const password = document.querySelector("#password").value;
 
-    let sshCredentials = { ipv4_address, port_number, username, password};
-    console.log("ssh credentials to be inserted into the ssh_credentials table", sshCredentials);
     
     const remoteListNotif = document.createElement('div');
 
@@ -140,6 +142,9 @@ remoteInsertForm.addEventListener('submit', async(event) => {
         
         const result = await window.electronAPI.db.insertRemoteServers(remoteData);
         console.log("data inserted into db:", result);
+
+        let sshCredentials = { server_id: result.lastInsertRowid , ipv4_address, port_number, username, password};
+        console.log(sshCredentials);
 
         const sshCredsResult = await window.electronAPI.db.saveCredentials(sshCredentials);
         console.log("data inserted into the ssh_credentials table");
