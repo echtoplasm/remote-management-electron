@@ -236,7 +236,7 @@ h1, h2, h3 {
 .server-item li {
     padding: 4px 0;
     color: #ccc;
-    font-size: 0.9em;
+    font-size: 1rem;
 }
 
 /* Optional: Add some terminal-style accents */
@@ -307,15 +307,15 @@ h1, h2, h3 {
   background: linear-gradient(145deg, #404040, #505050);
   color: #ffffff;
   border: 1px solid #606060;
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 0.75rem;
   border-radius: 8px;
-  font-size: 1rem;
+  font-size: .75rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-top: 1rem;
+  margin: .5rem;
 }
 
 .btn:hover {

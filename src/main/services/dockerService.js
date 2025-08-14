@@ -1,12 +1,12 @@
 const { sshConnExec } = require('../services/sshManager.js');
 
-
-const dockerPs = async () => {
+//need to refactor to allow the user to pass the params
+const dockerPs = async (ipv4_address, port_number, username, password) => {
     const command = 'docker ps --format json';
-    const config = { host: process.env.SSH_HOST, 
-                     port: process.env.REMOTE_PORT, 
-                     username: process.env.SSH_USER, 
-                     password: process.env.SSH_PASSWORD }
+    const config = { host: ipv4_address, 
+                     port: port_number, 
+                     username: username, 
+                     password: password }
 
     const containersJson = await sshConnExec(config, command);
     

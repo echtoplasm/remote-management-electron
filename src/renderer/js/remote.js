@@ -1,11 +1,56 @@
-const scanForContainerBtn = document.getElementById('scanForContainerBtn');
+const scanForContainers = async (credentials) => {
+    const scanResults = await window.electronAPI.docker.dockerPs(credentials.ipv4_address, 
+                                                                 credentials.port_number,
+                                                                 credentials.username, 
+                                                                 credentials.password)
+    console.log(scanResults); 
+    console.log(`ITS ALIVE! 🧟‍♂️🔬 DOCKER SCAN ON ${credentials.ipv4_address} SUCCESSFUL`);
+}
+
+//method to close notification cards, pass value as string 
+const closeNotif = async (id) => {
+    const notif = document.getElementById(id);   
+    console.log(notif); 
+    if(notif){
+        notif.remove();
+    }
+}
+
+
+
 
 const getServerCreds = async(serverId) => {
+    const rsListDiv = document.getElementById("remoteServerList");
     const creds = await window.electronAPI.db.getServerCreds(serverId);
-    console.log(creds);  
-}; 
+    console.log(creds);
+    window.credentials = creds;
+   
 
-window.getServerCreds = getServerCreds;
+    const dockerConfirmationModal = document.createElement('div');
+
+    dockerConfirmationModal.className = 'notif-card';
+    dockerConfirmationModal.id = 'manageContainerModal'
+    dockerConfirmationModal.innerHTML = (`
+        <h3>Added Remote Server: ${creds.ipv4_address} to Docker Management </h3>
+        <small>
+            Closing this window will still allow manual insertion of the docker Containers
+            <b>OR</b> automated server scanning at a later date
+            
+            If closed the docker containers on this remote server will not be stored.
+        </small>
+        <button id="dockerScan" class="btn">Scan for docker containers</button>
+        <button id="closeDockerScan" class="btn">Close</button>
+    `)
+
+    rsListDiv.appendChild(dockerConfirmationModal);
+    
+    const dockerScan = document.getElementById('dockerScan');
+    dockerScan.addEventListener('click', () => scanForContainers(creds));
+    
+    const closeDockerScan = document.getElementById("closeDockerScan");
+    closeDockerScan.addEventListener('click', () => closeNotif('manageContainerModal'));
+
+};
 
 const deleteServer = async(ipv4_address) => {
 
@@ -14,6 +59,7 @@ const deleteServer = async(ipv4_address) => {
     if (serverElement){
         serverElement.remove()
     }
+    
     let deleteResult = await window.electronAPI.db.deleteRemoteServer(ipv4_address);
 } 
 
@@ -35,7 +81,7 @@ const fetchAllServers = async () => {
     results.forEach(server => {
         console.log('about to destructure:', server);
         const { server_id, ipv4_address, port_number, referential_name, description } = server;
-        console.log('destructured server_id:', server_id);
+        console.log('destructured server_id:', server_id); 
 
         const newServer = document.createElement('div');
         newServer.className = 'server-item';// need to style this class
@@ -47,7 +93,7 @@ const fetchAllServers = async () => {
                 <li>Description: ${description}</li>
             </ul>
             <button class="btn delete-btn">Delete Server</button>
-            <button class="btn scan-btn" class="btn" onClick="getServerCreds(${server_id})">Scan for docker containers</button>
+            <button class="btn scan-btn" class="btn">Manage Containers</button>
         `);
 
         const rsListDiv = document.getElementById("rslist");
@@ -56,6 +102,7 @@ const fetchAllServers = async () => {
 
 
         deleteBtn.addEventListener('click', () => deleteServer(ipv4_address));
+        scanBtn.addEventListener('click', () => getServerCreds(server_id));
 
         rsListDiv.appendChild(newServer);
 
@@ -122,7 +169,6 @@ sshForm.addEventListener('submit', async (event) =>{
     
 })
 
-
 remoteInsertForm.addEventListener('submit', async(event) => {
     event.preventDefault();
 
@@ -130,9 +176,13 @@ remoteInsertForm.addEventListener('submit', async(event) => {
     const port_number = document.querySelector("#portNumber").value;
     const referential_name = document.querySelector("#refName").value;
     const description = document.querySelector("#descrip").value;
-    const username = document.querySelector("#username").value;
-    const password = document.querySelector("#password").value;
+    const username = document.querySelector("#usernameAddServer").value;
+    const password = document.querySelector("#passwordAddServer").value;
     const remoteList = document.querySelector("#remoteList");
+
+    console.log('username is:', username);
+
+    console.log('password is:', password);
 
     let remoteData = { ipv4_address, port_number, referential_name, description };
 

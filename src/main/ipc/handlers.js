@@ -48,8 +48,8 @@ const setupIPC = () => {
 
     //Docker IPCS's 
     
-    ipcMain.handle('dockerPs', async() => {
-        return dockerPs()
+    ipcMain.handle('dockerPs', async(event, ipv4_address, port_number, username, password) => {
+        return dockerPs(ipv4_address, port_number, username, password)
     })
     
     //change the sql method because this is almost the exact same as get creds

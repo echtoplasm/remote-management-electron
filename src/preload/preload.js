@@ -65,7 +65,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     },
 
     docker: {
-        dockerPs: () => ipcRenderer.invoke('dockerPs') 
+        dockerPs: (ipv4_address, port_number, username, password) => ipcRenderer.invoke('dockerPs', ipv4_address, port_number, username, password) 
     }
 })
 
