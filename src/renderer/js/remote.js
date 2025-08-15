@@ -5,6 +5,7 @@ const scanForContainers = async (credentials) => {
                                                                  credentials.password)
     console.log(scanResults); 
     console.log(`ITS ALIVE! 🧟‍♂️🔬 DOCKER SCAN ON ${credentials.ipv4_address} SUCCESSFUL`);
+    window.scanResults = scanResults;
 }
 
 //method to close notification cards, pass value as string 
@@ -16,9 +17,17 @@ const closeNotif = async (id) => {
     }
 }
 
+//open new containers window 
 
+const openContainerWindow = async () => {
+    await window.electronAPI.nav.newWindow({
+        width: 800,
+        height: 600,
+        url: 'containerlist.html'
+    });
+}
 
-
+//getting server credentials to pass to dockerPs
 const getServerCreds = async(serverId) => {
     const rsListDiv = document.getElementById("remoteServerList");
     const creds = await window.electronAPI.db.getServerCreds(serverId);
@@ -63,7 +72,7 @@ const deleteServer = async(ipv4_address) => {
     let deleteResult = await window.electronAPI.db.deleteRemoteServer(ipv4_address);
 } 
 
-
+ 
 // fetch all servers being managed
 const fetchAllServers = async () => {
     const results = await window.electronAPI.db.listRemoteServers();
@@ -102,14 +111,17 @@ const fetchAllServers = async () => {
 
 
         deleteBtn.addEventListener('click', () => deleteServer(ipv4_address));
-        scanBtn.addEventListener('click', () => getServerCreds(server_id));
+        scanBtn.addEventListener('click', () => { 
+            getServerCreds(server_id);
+            openContainerWindow();
+        });
 
         rsListDiv.appendChild(newServer);
 
     });    
 };
 
-
+//collapse server list method
 const collapseServerList = () => {
     const rsListDiv = document.getElementById("rslist");
     rsListDiv.innerHTML = ('');
@@ -125,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-//event listener 
+//event listener to fetch all servers  
 document.addEventListener('DOMContentLoaded', () => {
     const remoteListBtn = document.querySelector("#remoteListBtn");
     if(remoteListBtn) {
@@ -133,6 +145,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+
+
+//Simple gui for RCE
 let config = {};
 
 const sshForm = document.querySelector("#ssh-form");

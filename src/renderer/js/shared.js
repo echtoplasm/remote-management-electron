@@ -5,7 +5,7 @@ const createNavigation = () => {
         <a href="#" class="nav-link" onclick="navigateTo('index.html')">Dashboard</a>
         <a href="#" class="nav-link" onclick="navigateTo('sysSpecs.html')">System Specs</a>
         <a href="#" class="nav-link" onclick="navigateTo('remote.html')">Remote Servers</a>
-        <a href="#" class="nav-link" onclick="navigateTo('docker.html')">Docker</a>
+        <a href="#" class="nav-link" onclick="navigateTo(' docker.html')">Docker</a>
     `;
     document.body.insertAdjacentElement('afterbegin', nav);
 }

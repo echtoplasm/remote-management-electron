@@ -2,6 +2,7 @@ const { ipcMain, BrowserWindow } = require('electron');
 const { sshGuiExec, spawnTunnel, tunnelWebSockets, dockerVersion, installDockerForOS, getServerCreds } = require ('../services/sshManager.js');
 const { sysInfo, currentLoad } =  require('../services/localSysInfo.js');
 const { dockerPs } = require('../services/dockerService.js');
+const nav = require('../services/navigationManager.js');
 const db = require('../services/dbManager.js');
 
 
@@ -119,11 +120,11 @@ const setupIPC = () => {
         const window = BrowserWindow.fromWebContents(event.sender);
         window.loadFile(`src/renderer/${page}`);
     });
-/*    
-    ipcMain.handle('' , async() => {
-
+    
+    ipcMain.handle('openNewWindow' , async(event, options) => {
+        return nav.openNewWindow(options);
     });
-*/
+
 }
 
 

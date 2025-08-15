@@ -61,7 +61,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
     },
 
     nav: {
-        navigate: (page) => ipcRenderer.invoke('navigate-to', page) 
+        newWindow: (options) => ipcRenderer.invoke('openNewWindow', options),
+        navigate: (page) => ipcRenderer.invoke('navigate-to', page)
     },
 
     docker: {
