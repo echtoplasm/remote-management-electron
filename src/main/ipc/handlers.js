@@ -120,12 +120,7 @@ const setupIPC = () => {
         const window = BrowserWindow.fromWebContents(event.sender);
         window.loadFile(`src/renderer/${page}`);
     });
-    
-    ipcMain.handle('openNewWindow' , async(event, options) => {
-        return nav.openNewWindow(options);
-    });
-
-}
+};
 
 
 module.exports = { setupIPC };

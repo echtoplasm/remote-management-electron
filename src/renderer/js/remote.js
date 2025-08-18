@@ -1,12 +1,91 @@
-const scanForContainers = async (credentials) => {
-    const scanResults = await window.electronAPI.docker.dockerPs(credentials.ipv4_address, 
+const insertDockerContainer = async (containerData, button) => {
+    //server_id, container_name, image_path, status 
+    button.innerHTML = 'adding...';
+    button.disabled = true;
+
+    try{
+        const insertResult = await window.electronAPI.db.insertDockerContainer(containerData);
+        button.innerHTML = 'added ✔'
+        button.style.backgroundColor = '#4CAF50';
+        button.style.color = 'white';
+    }catch(err){
+        console.error('Failed to add container', err);
+        button.innerHTML = 'Error ❌'
+        button.style.backgroundColor = '#f44336';
+        button.style.color = 'white';
+    }
+
+}
+
+
+const scanForContainers = async (credentials, serverId) => {
+    try{
+        const scanResults = await window.electronAPI.docker.dockerPs(credentials.ipv4_address, 
                                                                  credentials.port_number,
                                                                  credentials.username, 
                                                                  credentials.password)
-    console.log(scanResults); 
-    console.log(`ITS ALIVE! 🧟‍♂️🔬 DOCKER SCAN ON ${credentials.ipv4_address} SUCCESSFUL`);
-    window.scanResults = scanResults;
-}
+        console.log('scan results:', scanResults);
+        console.log(`Type of:: scan results::`, typeof(scanResults))
+        console.log(`ITS ALIVE! 🧟‍♂️🔬 DOCKER SCAN ON ${credentials.ipv4_address} SUCCESSFUL`);
+        
+                
+        const dockerScanModal = document.createElement('div');
+        dockerScanModal.className = 'notif-card';
+        dockerScanModal.id = 'dockerScanResults';
+        
+        dockerScanModal.innerHTML = (`<h3>Docker Containers on ${credentials.ipv4_address}</h3>`);
+        
+        scanResults.forEach((container, index) => {
+            
+            const {ID, Names, Image, State, Status } = container;
+
+
+            const containerItem = document.createElement('div');
+            containerItem.className = 'container-item';
+            containerItem.id = ID;
+            
+            const buttonId = `container-add-${ID}`
+
+            containerItem.innerHTML = (
+                `
+                <div>
+                    <ul>
+                        <li>Server Id: ${serverId}</li>
+                        <li>Container Name: ${Names}</li>
+                        <li>Image: ${Image}</li>
+                        <li>Status: ${Status}</li>
+                    </ul>
+                    <button class="btn container-add-btn">Add to gnosis</button>
+                </div>
+                `
+        );
+       
+            
+            dockerScanModal.appendChild(containerItem);
+            
+            const containerData = { "server_id": serverId,
+                                    "container_name": Names, 
+                                    "image_path": Image, 
+                                    "state": State, 
+                                    "status": Status 
+                                    };
+
+
+            const addContainerBtn = containerItem.querySelector('.container-add-btn');
+            addContainerBtn.addEventListener('click', () => insertDockerContainer(containerData, addContainerBtn));
+        });
+        
+        const contentContainer = document.getElementById("content-container");
+        contentContainer.prepend(dockerScanModal);
+
+        
+ 
+    }catch(err){
+        console.error('unable to open modal', err.message);
+        console.error('Full error:', err)
+    }
+};
+
 
 //method to close notification cards, pass value as string 
 const closeNotif = async (id) => {
@@ -17,15 +96,6 @@ const closeNotif = async (id) => {
     }
 }
 
-//open new containers window 
-
-const openContainerWindow = async () => {
-    await window.electronAPI.nav.newWindow({
-        width: 800,
-        height: 600,
-        url: 'containerlist.html'
-    });
-}
 
 //getting server credentials to pass to dockerPs
 const getServerCreds = async(serverId) => {
@@ -54,7 +124,7 @@ const getServerCreds = async(serverId) => {
     rsListDiv.appendChild(dockerConfirmationModal);
     
     const dockerScan = document.getElementById('dockerScan');
-    dockerScan.addEventListener('click', () => scanForContainers(creds));
+    dockerScan.addEventListener('click', () => scanForContainers(creds, serverId));
     
     const closeDockerScan = document.getElementById("closeDockerScan");
     closeDockerScan.addEventListener('click', () => closeNotif('manageContainerModal'));
@@ -111,9 +181,15 @@ const fetchAllServers = async () => {
 
 
         deleteBtn.addEventListener('click', () => deleteServer(ipv4_address));
-        scanBtn.addEventListener('click', () => { 
-            getServerCreds(server_id);
-            openContainerWindow();
+        scanBtn.addEventListener('click', async () => { 
+           scanBtn.disable = true;
+            try {
+                await getServerCreds(server_id);
+            } catch(err) {
+                console.error('Failed to get server credentials', err.message);
+            } finally {
+                scanBtn.disabled = false;
+            }
         });
 
         rsListDiv.appendChild(newServer);

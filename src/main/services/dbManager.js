@@ -12,6 +12,8 @@ if(process.env.NODE_ENV === 'test') {
 
 const db = new Database(dbPath);
 
+console.log("DB path being used", dbPath);
+
 const initDB = () => {
     // MAKE SURE TO REMOVE THESE DROP STATMENTS!
 /*
@@ -22,6 +24,7 @@ const initDB = () => {
     db.exec('drop table if exists container_logs');
 */
     db.exec('PRAGMA foreign_keys = ON;');
+    
 
     db.exec(`
         create table if not exists users (
@@ -60,6 +63,7 @@ const initDB = () => {
             server_id integer not null,
             container_name text not null, 
             image_path text not null,
+            state text not null,
             status text not null,
             created_at datetime default current_timestamp, 
             updated_at datetime default current_timestamp,
@@ -157,13 +161,13 @@ const deleteRemoteServer = (ipv4_address) => {
 
 //insert into docker_containers 
 const insertDockerContainer = (containerData) => {
-    const { server_id, container_name, image_path, status } = containerData;
+    const { server_id, container_name, image_path, state, status } = containerData;
     const stmt = db.prepare(`
-        insert or replace into docker_containers (server_id, container_name, image_path, status, created_at, updated_at)
-        values(?, ?, ?, ?, current_timestamp, current_timestamp);
+        insert or replace into docker_containers (server_id, container_name, image_path, state, status, created_at, updated_at)
+        values(?, ?, ?, ?, ?, current_timestamp, current_timestamp);
     `);
 
-    stmt.run(server_id, container_name, image_path, status);
+    stmt.run(server_id, container_name, image_path, state, status);
 };
 
 //get docker container by container name 

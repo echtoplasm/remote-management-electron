@@ -10,10 +10,13 @@ const dockerPs = async (ipv4_address, port_number, username, password) => {
 
     const containersJson = await sshConnExec(config, command);
     
-    const firstLine = containersJson.trim().split('\n')[0];
-    const containersParsed = JSON.parse(firstLine);
+    const containers = containersJson
+                        .trim()
+                        .split('\n')
+                        .filter(line => line.trim())
+                        .map(line => JSON.parse(line));
 
-    return containersParsed;
+    return containers;
     
 }
 

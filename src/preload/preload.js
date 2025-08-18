@@ -62,7 +62,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
     nav: {
         newWindow: (options) => ipcRenderer.invoke('openNewWindow', options),
-        navigate: (page) => ipcRenderer.invoke('navigate-to', page)
+        navigate: (page) => ipcRenderer.invoke('navigate-to', page),
+        getScanResults: () => ipcRenderer.invoke('getScanResults')
     },
 
     docker: {
