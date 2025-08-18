@@ -105,4 +105,50 @@ const testDockerVersion = async() => {
 testDockerVersion();
 
 
+const getManagedContainers = async () => {
+    const containers =  await window.electronAPI.db.listContainers();
+    console.log("currently managed containers:", containers);
+}
 
+getManagedContainers();
+
+const renderManagedContainers = async () => {
+    const containersDiv = document.createElement('div');
+    containersDiv.className = "card-wrapper";
+    containersDiv.id = "container-card";
+    containersDiv.style.display = "flex";
+    containersDiv.style.flexWrap = "wrap";
+    containersDiv.style.gap = "10px";
+
+    
+    const containers = await window.electronAPI.db.listContainers();
+
+    containers.forEach(container => {
+        const {container_id, container_name, server_id, state, status } = container;
+        
+        
+        const indivContainer = document.createElement('div');
+        indivContainer.className = "card";
+        indivContainer.id = container_id;
+
+        indivContainer.innerHTML = (`
+            <div>
+                <ul>
+                    <li>Container name: ${container_name}</li>
+                    <li>Server Id: ${server_id}</li>
+                    <li>State: ${state}</li>
+                    <li>Status: ${status}</li>
+                </ul>
+            </div>
+            `);
+        
+        containersDiv.appendChild(indivContainer);
+    });
+
+    const containerHolder = document.getElementById('dockerContainer');
+    containerHolder.appendChild(containersDiv);
+};
+
+const containerHolder = document.getElementById('dockerContainer');
+containerHolder.innerHTML = '';
+document.addEventListener('DOMContentLoaded', () => renderManagedContainers());
