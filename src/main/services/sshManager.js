@@ -6,7 +6,7 @@ const WebSocket = require('ws');
 let sshConnection = null;
 
 // GUI ssh exec for user interactivity 
-const sshConnExec = async(config, command) => {
+const sshConnectExec = async(config, command) => {
       return new Promise((resolve, reject) => {
         const conn = new Client();
         let output = '';
@@ -234,5 +234,5 @@ const installDockerForOS = async (selectedOS) => {
 
 }
 
-module.exports = { sshConnExec, spawnTunnel, dockerVersion, tunnelWebSockets, installDockerForOS };
+module.exports = { sshConnectExec, spawnTunnel, dockerVersion, tunnelWebSockets, installDockerForOS };
 

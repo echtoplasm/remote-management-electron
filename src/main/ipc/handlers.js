@@ -1,5 +1,5 @@
 const { ipcMain, BrowserWindow } = require('electron');
-const { sshGuiExec, spawnTunnel, tunnelWebSockets, dockerVersion, installDockerForOS, getServerCreds } = require ('../services/sshManager.js');
+const { sshConnectExec, spawnTunnel, tunnelWebSockets, dockerVersion, installDockerForOS, getServerCreds } = require ('../services/sshManager.js');
 const { sysInfo, currentLoad } =  require('../services/localSysInfo.js');
 const { dockerPs } = require('../services/dockerService.js');
 const nav = require('../services/navigationManager.js');
@@ -18,8 +18,8 @@ const setupIPC = () => {
     });
 
     //SSH IPC's
-    ipcMain.handle('sshConnExec', async(event, config, command) => {
-        return sshGuiExec(config, command);
+    ipcMain.handle('sshConnectExec', async(event, config, command) => {
+        return sshConnectExec(config, command);
     });
     
     ipcMain.handle('spawnSSHtunnel', async(event, localPort, remotePort, remoteUser, remoteHost, password) => {
@@ -27,7 +27,7 @@ const setupIPC = () => {
     });
 
     ipcMain.handle('webSocketComm', async(event, data) => {
-        return tunnelWebSockets(data);
+        return tunnelWebSockets(data); 
     });
 
     ipcMain.handle('dockerVersion', async(event, data) => {
@@ -51,6 +51,10 @@ const setupIPC = () => {
     
     ipcMain.handle('dockerPs', async(event, ipv4_address, port_number, username, password) => {
         return dockerPs(ipv4_address, port_number, username, password)
+    });
+
+    ipcMain.handle('containerExecCreds', (event, serverId, containerName) => {
+        return db.containerExecCreds(serverId, containerName);
     })
     
     //change the sql method because this is almost the exact same as get creds

@@ -22,7 +22,7 @@ const showOSSelection = () => {
         `;
 
 
-        document.body.insertAdjacentHTML('beforeend', modalHTML);
+ document.body.insertAdjacentHTML('beforeend', modalHTML);
 
         let selectedOS = null;
         const modal = document.getElementById('osModal');
@@ -126,9 +126,8 @@ const renderManagedContainers = async () => {
     containers.forEach(container => {
         const {container_id, container_name, server_id, state, status } = container;
         
-        
         const indivContainer = document.createElement('div');
-        indivContainer.className = "card";
+        indivContainer.className = "card container-card";
         indivContainer.id = container_id;
 
         indivContainer.innerHTML = (`
@@ -139,10 +138,13 @@ const renderManagedContainers = async () => {
                     <li>State: ${state}</li>
                     <li>Status: ${status}</li>
                 </ul>
+                <button class="btn stop-container-btn">Stop Container</button>
+                <button class="btn start-container-btn">Start Container</button>
             </div>
             `);
-        
         containersDiv.appendChild(indivContainer);
+        const containerStopBtn = indivContainer.querySelector('.stop-container-btn');
+        containerStopBtn.addEventListener('click', () => stopDockerContainer(server_id, container_name));
     });
 
     const containerHolder = document.getElementById('dockerContainer');
@@ -152,3 +154,37 @@ const renderManagedContainers = async () => {
 const containerHolder = document.getElementById('dockerContainer');
 containerHolder.innerHTML = '';
 document.addEventListener('DOMContentLoaded', () => renderManagedContainers());
+
+// write a db query to get an associated container, with creds
+
+const containerExecCreds = async (serverId, containerName) => {
+    const containerInfo = await window.electronAPI.db.containerExecCreds(serverId, containerName);
+}
+
+// once we hit stop container we need update the status -- state, we need a db method for updating
+const stopDockerContainer = async (serverId, containerName) => {
+    const containerCreds = await window.electronAPI.db.containerExecCreds(serverId, containerName);
+    
+    console.log(containerCreds.container_name);
+    const command = `docker stop ${containerCreds.container_name}`
+    
+    const config = {
+        host: containerCreds.ipv4_address,
+        port: containerCreds.port_number, 
+        username: containerCreds.username,
+        password: containerCreds.password
+    };
+    
+    try{
+        await window.electronAPI.ssh.sshConnectExec(config, command);
+        console.log('successful container stop')
+    }catch(err){
+        console.error(`UNSUCCESSFUL container stop for container on IP:${containerCreds.ipv4_address} :::: container named: ${containerCreds.container_name}` );
+    }
+}
+
+const startDockerContainer = (btn) => {
+    
+}
+
+

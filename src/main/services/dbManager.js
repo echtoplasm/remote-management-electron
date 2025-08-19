@@ -81,6 +81,7 @@ const initDB = () => {
         );
     `);
     console.log('Database initialized');
+    console.log('database path for CLI interact:', dbPath);
 };
 
 
@@ -131,6 +132,26 @@ const getServerCreds = (serverId) => {
     
     return stmt.get(serverId);
     
+};
+
+//server data, container data, credentials to execute commands on specific container 
+const containerExecCreds = (serverId, containerName) => {
+    const stmt = db.prepare(
+        `select
+            rs.server_id,    
+            rs.ipv4_address,
+            rs.port_number,
+            sc.username, 
+            sc.password,
+            dc.container_id, 
+            dc.container_name
+        from remote_servers rs 
+        join ssh_credentials sc on rs.server_id = sc.server_id
+        join docker_containers dc on rs.server_id = dc.server_id
+        where rs.server_id = ? AND dc.container_name = ?
+        `);
+
+    return stmt.get(serverId, containerName);
 };
 
 //insert into remote servers
@@ -237,5 +258,6 @@ module.exports = {
     insertContainerLog,
     getContainerLog,
     deleteContainerLog,
-    getServerCreds
+    getServerCreds,
+    containerExecCreds
 };

@@ -1,4 +1,4 @@
-const { sshConnExec } = require('../services/sshManager.js');
+const { sshConnectExec } = require('../services/sshManager.js');
 
 //need to refactor to allow the user to pass the params
 const dockerPs = async (ipv4_address, port_number, username, password) => {
@@ -8,7 +8,7 @@ const dockerPs = async (ipv4_address, port_number, username, password) => {
                      username: username, 
                      password: password }
 
-    const containersJson = await sshConnExec(config, command);
+    const containersJson = await sshConnectExec(config, command);
     
     const containers = containersJson
                         .trim()
@@ -16,8 +16,7 @@ const dockerPs = async (ipv4_address, port_number, username, password) => {
                         .filter(line => line.trim())
                         .map(line => JSON.parse(line));
 
-    return containers;
-    
+    return containers;    
 }
 
 module.exports = { dockerPs };

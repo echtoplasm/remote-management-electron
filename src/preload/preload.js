@@ -12,7 +12,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     
     //ssh ops
     ssh: {
-        sshConnectExec: (config, command) => ipcRenderer.invoke('sshConnExec', config, command),
+        sshConnectExec: (config, command) => ipcRenderer.invoke('sshConnectExec', config, command),
         spawnSSHtunnel: (localPort, remotePort, remoteUser, remoteHost, password) => ipcRenderer.invoke('spawnSSHtunnel', localPort, remotePort, remoteUser, remoteHost, password),
         dockerCheck: (data) => ipcRenderer.invoke('dockerVersion', data),
         installDockerForOS: (selectedOS) => ipcRenderer.invoke('installDockerForOS', selectedOS)
@@ -49,7 +49,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
         deleteContainerLog: (containerLogId) => ipcRenderer.invoke('deleteContainerLog', containerLogId),
 
         //get server credentials for remote server and for ssh creds to be passed to dockerPs
-        getServerCreds: (serverId) => ipcRenderer.invoke('getServerCreds', serverId)
+        getServerCreds: (serverId) => ipcRenderer.invoke('getServerCreds', serverId),
+
+        //get container information for specific container RCE
+        containerExecCreds: (serverId, containerName) => ipcRenderer.invoke('containerExecCreds', serverId, containerName)
     },
 
     env: {
